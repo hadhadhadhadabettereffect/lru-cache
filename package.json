@@ -1,0 +1,14 @@
+{
+  "name": "lru-cache",
+  "version": "1.0.0",
+  "description": "least recently used cache demo",
+  "main": "LRUCache.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Eric Birkeland",
+  "license": "ISC",
+  "devDependencies": {
+    "tape": "^4.9.0"
+  }
+}
