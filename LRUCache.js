@@ -72,7 +72,6 @@ LRUCache.prototype.get = function (key) {
  * @param {*} value
  */
 LRUCache.prototype.put = function (key, value) {
-
     // if storing objects or arrays and freezeValue == true
     // cache copies of the objects rather than direct refs
     if (this.freezeValues && typeof value == "object") {
@@ -91,7 +90,7 @@ LRUCache.prototype.put = function (key, value) {
 };
 
 LRUCache.prototype.removeLeastRecent = function () {
-    let item = this.rootNode.next;
+    var item = this.rootNode.next;
     this.rootNode.next = item.next;
     item.next.prev = this.rootNode;
     this.items.delete(item.key);
@@ -102,7 +101,7 @@ LRUCache.prototype.removeLeastRecent = function () {
  * @param {string} key
  */
 LRUCache.prototype.setMostRecent = function (key) {
-    let item = this.items.get(key);
+    var item = this.items.get(key);
     // link item's prev and next to each other
     item.prev.next = item.next;
     item.next.prev = item.prev;
@@ -118,7 +117,7 @@ LRUCache.prototype.setMostRecent = function (key) {
  * @param {*} value
  */
 function createNewItem(key, value) {
-    let item = new CacheItem(key, value);
+    var item = new CacheItem(key, value);
     item.next = this.tailNode;
     item.prev = this.tailNode.prev;
     this.tailNode.prev.next = item;
