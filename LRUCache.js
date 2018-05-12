@@ -1,4 +1,4 @@
-const defaultCapacity = 3;
+"use strict";
 
 var capacityValues = new WeakMap();
 
@@ -6,7 +6,7 @@ var capacityValues = new WeakMap();
  * Least-recently used cache object constructor
  * @param {number} [capacity] - max number of stored values
  */
-module.exports = function LRUCache(capacity) {
+function LRUCache(capacity) {
     // keyed collection of CacheItem objects
     this.items = new Map();
     // first/last bookends for finding oldest/inserting newest
@@ -15,8 +15,12 @@ module.exports = function LRUCache(capacity) {
     this.rootNode.next = this.tailNode;
     this.tailNode.prev = this.rootNode;
 
-    capacityValues.set(this, defaultCapacity);
-    this.capacity = capacity || defaultCapacity;
+    capacityValues.set(this, this.defaultCapacity);
+    this.capacity = capacity || this.defaultCapacity;
+};
+
+LRUCache.prototype = {
+    defaultCapacity: 3
 };
 
 LRUCache.prototype.constructor = LRUCache;
@@ -28,7 +32,7 @@ Object.defineProperty(LRUCache.prototype, "capacity", {
     get: function () {
         return capacityValues.get(this);
     },
-    /**lru-
+    /**
      * @param {number} c - new max capacity
      */
     set: function (c) {
@@ -38,14 +42,9 @@ Object.defineProperty(LRUCache.prototype, "capacity", {
         if (c < 1) c = 1;
         // if reducing capacity, remove cached items to match
         if (c < capacityValues.get(this)) {
-            let items = this.items,
-                rootNode = this.rootNode,
-                oldest = rootNode.next;
-            while (items.length > c) {
-                items.delete(oldest.key);
-                oldest = oldest.next;
-                oldest.prev = rootNode;
-                rootNode.next = oldest;
+            var items = this.items;
+            while (items.size > c) {
+                this.removeLeastRecent();
             }
         }
         capacityValues.set(this, c);
@@ -60,39 +59,33 @@ Object.defineProperty(LRUCache.prototype, "capacity", {
 LRUCache.prototype.get = function (key) {
     if (this.items.has(key)) {
         // mark key as most recently used
-        this.touch(key);
+        this.setMostRecent(key);
         return this.items.get(key).value;
     }
     return null;
 };
 
 /**
- * store cached value, set
+ * store cached value
  * @param {string} key
  * @param {*} value
- * @return null
  */
 LRUCache.prototype.put = function (key, value) {
-    let item;
     if (this.items.hasOwnProperty(key)) {
-        item = this.items.get(key);
+        this.items.get(key).value = value;
+        this.setMostRecent(key);
     } else {
-        // reassign least-recently used new key
-        // to avoid creating new objects unnecessarily
-        // NOTE: if zero is allowed as a capacity size,
-        // this should check to make sure rootNode.next != tailNode
-        if (this.items.length === this.capacity) {
-            item = this.rootNode.next;
-            this.items.delete(item.key);
-            item.key = key;
-        } else {
-            item = new CacheItem(key, value);
-        }
-        this.items.set(key, item);
+        if (this.items.size === this.capacity)
+            this.removeLeastRecent();
+        createNewItem.call(this, key, value);
     }
-    item.value = value;
-    this.touch(key);
-    return null;
+};
+
+LRUCache.prototype.removeLeastRecent = function () {
+    let item = this.rootNode.next;
+    this.rootNode.next = item.next;
+    item.next.prev = this.rootNode;
+    this.items.delete(item.key);
 };
 
 /**
@@ -111,6 +104,20 @@ LRUCache.prototype.setMostRecent = function (key) {
 };
 
 /**
+ * create a new cache value item and append set it as most recently used
+ * @param {string} key
+ * @param {*} value
+ */
+function createNewItem(key, value) {
+    let item = new CacheItem(key, value);
+    item.next = this.tailNode;
+    item.prev = this.tailNode.prev;
+    this.tailNode.prev.next = item;
+    this.tailNode.prev = item;
+    this.items.set(key, item);
+}
+
+/**
  * constructor for cache value wrapper object
  * stores a value in addition to next/prev items for used history
  * @param {string} key
@@ -122,3 +129,5 @@ function CacheItem(key, value) {
     this.next = null;
     this.prev = null;
 }
+
+module.exports = LRUCache;
