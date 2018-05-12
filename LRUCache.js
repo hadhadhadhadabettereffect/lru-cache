@@ -20,7 +20,8 @@ function LRUCache(capacity) {
 };
 
 LRUCache.prototype = {
-    defaultCapacity: 3
+    defaultCapacity: 3,
+    freezeValues: true
 };
 
 LRUCache.prototype.constructor = LRUCache;
@@ -71,6 +72,14 @@ LRUCache.prototype.get = function (key) {
  * @param {*} value
  */
 LRUCache.prototype.put = function (key, value) {
+
+    // if storing objects or arrays and freezeValue == true
+    // cache copies of the objects rather than direct refs
+    if (this.freezeValues && typeof value == "object") {
+        if (Array.isArray(value)) value = value.slice();
+        else value = Object.assign({}, value);
+    }
+
     if (this.items.hasOwnProperty(key)) {
         this.items.get(key).value = value;
         this.setMostRecent(key);

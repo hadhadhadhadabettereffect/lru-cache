@@ -7,9 +7,10 @@ test.createStream()
     .pipe(process.stdout);
 
 test("LRUCache tests", function (t) {
-    t.plan(2);
+    t.plan(3);
     t.test("capacity property value", capacityTests);
     t.test("history tests", historyTests);
+    t.test("value storage tests", valueTests);
 });
 
 function capacityTests(t) {
@@ -79,4 +80,34 @@ function historyTests(t) {
     cache.put("3", 0);
     t.equal(cache.tailNode.prev.key, "3",
         "cache.put(key) sets key as most recent");
+}
+
+function valueTests(t) {
+    t.plan(4);
+    var cache = new LRUCache(5);
+    var obj = { x: 0 };
+    var arr = [];
+
+    cache.put("obj", obj);
+    cache.put("arr", arr);
+
+    obj.x = 9;
+    arr.push(9);
+
+    t.equal(cache.get("arr").length, 0,
+        "if cache.freezeValues, cached arrays are copied");
+    t.equal(cache.get("obj").x, 0,
+        "if cache.freezeValues, cached objects are copied");
+
+    cache.freezeValues = false;
+    cache.put("obj", obj);
+    cache.put("arr", arr);
+
+    obj.x = 22;
+    arr.push(22);
+
+    t.equal(cache.get("arr").length, 2,
+        "if !cache.freezeValues, cached arrays are refs");
+    t.equal(cache.get("obj").x, 22,
+        "if !cache.freezeValues, cached objects are refs");
 }
