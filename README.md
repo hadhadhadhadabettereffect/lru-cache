@@ -1,9 +1,13 @@
 # LRU Cache
+LRU Cache object constructor
+
 ## usage
 ```javascript
-var cacheObj = new LRUCache();
+var capacity = 10;
+var cacheObj = new LRUCache(capacity);
 cacheObj.put("keyA", 33);
-cacheObj.get("keyA");
+var a = cacheObj.get("keyA");
+console.log(a); // 33
 ```
 
 ## running tests
