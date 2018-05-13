@@ -51,7 +51,7 @@ function capacityTests(t) {
 
     cache.capacity = 2;
     t.equal(cache.items.size, 2,
-        "the number of stored values reduced when capacity is lowered");
+        "the number of stored values is reduced when capacity is lowered");
 }
 
 function historyTests(t) {
@@ -61,11 +61,11 @@ function historyTests(t) {
 
     for (var i = 0; i < cap; cache.put(`${i}`, i++));
     t.equal(cache.rootNode.next.key, "0",
-        "item closest to root node should be least recently used");
+        "the item closest to root node should be least recently used");
 
     cache.put(`${cap}`, cap);
     t.false(cache.items.has("0"),
-        "least recently used item will be removed when capacity exceeded");
+        "the least recently used item will be removed when capacity exceeded");
     t.equal(cache.rootNode.next.key, "1",
         "the item after the previous lru will become the lru after removal");
     t.equal(cache.tailNode.prev.key, `${cap}`,
@@ -79,7 +79,7 @@ function historyTests(t) {
 
     cache.put("3", 0);
     t.equal(cache.tailNode.prev.key, "3",
-        "cache.put(key) sets key as most recent");
+        "cache.put(key, value) sets key as most recent");
 }
 
 function valueTests(t) {

@@ -1,5 +1,8 @@
 "use strict";
 
+if (typeof module === "object" && module.exports)
+    module.exports = LRUCache;
+
 var capacityValues = new WeakMap();
 
 /**
@@ -74,7 +77,7 @@ LRUCache.prototype.get = function (key) {
 LRUCache.prototype.put = function (key, value) {
     // if storing objects or arrays and freezeValue == true
     // cache copies of the objects rather than direct refs
-    if (this.freezeValues && typeof value == "object") {
+    if (this.freezeValues && typeof value === "object") {
         if (Array.isArray(value)) value = value.slice();
         else value = Object.assign({}, value);
     }
@@ -137,5 +140,3 @@ function CacheItem(key, value) {
     this.next = null;
     this.prev = null;
 }
-
-module.exports = LRUCache;
