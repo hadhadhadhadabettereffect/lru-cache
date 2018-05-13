@@ -14,11 +14,15 @@ test("LRUCache tests", function (t) {
 });
 
 function capacityTests(t) {
-    t.plan(9);
+    t.plan(10);
     var cache = new LRUCache();
 
     t.equal(cache.capacity, cache.defaultCapacity,
         "if no arguments passed to constructor, capicity = defaultCapacity");
+
+    cache = new LRUCache(12);
+    t.equal(cache.capacity, 12,
+        "capicity will be set from constructor argument if provided");
 
     cache.capacity = 5;
     t.equal(cache.capacity, 5,

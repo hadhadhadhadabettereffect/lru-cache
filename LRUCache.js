@@ -1,7 +1,8 @@
 "use strict";
 
-if (typeof module === "object" && module.exports)
+if (typeof module === "object" && module.exports) {
     module.exports = LRUCache;
+}
 
 var capacityValues = new WeakMap();
 

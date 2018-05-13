@@ -1,8 +1,9 @@
+# LRU Cache
 ## usage
 ```javascript
 var cacheObj = new LRUCache();
-cache.put("keyA", 33);
-cache.get("keyA");
+cacheObj.put("keyA", 33);
+cacheObj.get("keyA");
 ```
 
 ## running tests
